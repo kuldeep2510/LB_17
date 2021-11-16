@@ -98,7 +98,7 @@ class SinglyLL
        }
        else
        {
-             while (temp->next!=NULL)
+             while (temp->next->next!=NULL)
              {
                  temp=temp->next;
                  
