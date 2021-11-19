@@ -8,7 +8,7 @@ typedef struct node
     struct node *prev;
 }NODE, *PNODE, **PPNODE;
 
-void InsertFirst(PPNODE Head, int no)
+void InsertFirst(PPNODE Head,PPNODE Tail, int no)
 {
     PNODE newn = NULL;
     
@@ -18,9 +18,10 @@ void InsertFirst(PPNODE Head, int no)
     newn -> next = NULL;
     newn->prev = NULL;
     
-    if(*Head == NULL)
+    if(*Head == NULL && *Tail==NULL)
     {
         *Head = newn;
+        *Tail=newn;
     }
     else
     {
@@ -31,7 +32,7 @@ void InsertFirst(PPNODE Head, int no)
     }
 }
 
-void InsertLast(PPNODE Head, int no)
+void InsertLast(PPNODE Head,PPNODE Tail, int no)
 {
     PNODE newn = NULL;
     PNODE temp = *Head;
@@ -42,57 +43,65 @@ void InsertLast(PPNODE Head, int no)
        newn -> next = NULL;
        newn->prev = NULL;
        
-       if(*Head == NULL)
+       if((*Head == NULL)  && (*Tail==NULL) )
        {
            *Head = newn;
+            *Tail=newn;
        }
        else
        {
-           while(temp -> next != NULL)
-           {
-               temp = temp->next;
-           }
-           
-           temp->next = newn;
-           newn->prev = temp;
+           (*Tail)->next=newn;
+           newn->prev=*Tail;
+           *Tail=newn;
+
        }
 }
 
 
-void DeleteFirst(PPNODE Head)
+void DeleteFirst(PPNODE Head,PPNODE Tail)
 {
-    PNODE temp =*Head;
-    if(*Head!=NULL)
+    
+    if(*Head==NULL && *Tail==NULL)
+    {
+       return;
+    }
+    else if (*Head==*Tail)
+    {
+       free(*Head);
+
+       *Head=NULL;
+       *Tail=NULL;
+    }
+    else
     {
         *Head=(*Head)->next;
+        free ((*Head)->prev);
         (*Head)->prev=NULL;
-        free(temp);
+
     }
+    
 }
-void DeleteLast(PPNODE Head)
+void DeleteLast(PPNODE Head,PPNODE Tail)
 {
 
     PNODE temp=*Head;
-    if (*Head==NULL)
+    if(*Head==NULL && *Tail==NULL)
     {
         return ;
 
     }
-    else if((*Head)->next==NULL)
+    else if((*Head)==(*Tail))
     {
         free(*Head);
-        *Head=NULL;
+       *Head=NULL;
+       *Tail=NULL;
 
     }
     else
     {
-       while (temp->next->next!=NULL)
-       {
-          temp=temp->next;
-       }
-       free(temp->next);
-       temp->next=NULL;
-
+      *Tail=(*Tail)->prev;
+      free((*Tail)->next);
+      (*Tail)->next=NULL;
     }
 }
 
@@ -118,7 +127,7 @@ int Count(PNODE Head)
     return iCnt;
 }
 
-void InsertAtPos(PPNODE Head,int no,int iPos)
+void InsertAtPos(PPNODE Head,PPNODE Tail,int no,int iPos)
 {
    int size=0;
    PNODE newn=NULL;
@@ -133,11 +142,11 @@ void InsertAtPos(PPNODE Head,int no,int iPos)
    }
    if(iPos==1)//first position
    {
-       InsertFirst(Head,no);
+       InsertFirst(Head,Tail,no);
    }
    else if (iPos==size+1)//Last positon 
    {
-      InsertLast(Head,no);
+      InsertLast(Head,Tail,no);
 
    }
    else   //in Between position
@@ -157,7 +166,7 @@ void InsertAtPos(PPNODE Head,int no,int iPos)
    }
    
 }
-void DeleteAtPos(PPNODE Head,int iPos)
+void DeleteAtPos(PPNODE Head,PPNODE Tail,int iPos)
 {
    int size=0;
   
@@ -173,11 +182,11 @@ void DeleteAtPos(PPNODE Head,int iPos)
    }
    if(iPos==1)//first position
    {
-       DeleteFirst(Head);
+       DeleteFirst(Head,Tail);
    }
    else if (iPos==size)//Last positon 
    {
-     DeleteLast(Head);
+     DeleteLast(Head,Tail);
 
    }
    else   //in Between position
@@ -200,14 +209,15 @@ void DeleteAtPos(PPNODE Head,int iPos)
 int main()
 {
     PNODE first = NULL;
+    PNODE last=NULL;
     int icnt = 0;
     int iChoice = 1, value = 0, iRet = 0, pos = 0;
     
-    InsertFirst(&first,51);
-    InsertFirst(&first,21);
-    InsertFirst(&first,11);
+    InsertFirst(&first,&last,51);
+    InsertFirst(&first,&last,21);
+    InsertFirst(&first,&last,11);
     
-    InsertLast(&first,101);
+    InsertLast(&first,&last,101);
     
     Display(first);
     
@@ -240,13 +250,13 @@ int main()
             case 1:
                 printf("Enter the data to insert\n");
                 scanf("%d",&value);
-                InsertFirst(&first,value);
+                InsertFirst(&first,&last,value);
                 break;
                 
             case 2:
                 printf("Enter the data to insert\n");
                 scanf("%d",&value);
-                InsertLast(&first,value);
+                InsertLast(&first,&last,value);
                 break;
                 
             case 3:
@@ -254,21 +264,21 @@ int main()
                 scanf("%d",&value);
                 printf("Enter the position\n");
                 scanf("%d",&pos);
-                InsertAtPos(&first,value,pos);
+                InsertAtPos(&first,&last,value,pos);
                 break;
                 
             case 4:
-                DeleteFirst(&first);
+                DeleteFirst(&first,&last);
                 break;
                 
             case 5:
-                DeleteLast(&first);
+                DeleteLast(&first,&last);
                 break;
                 
             case 6 :
                 printf("Enter the position\n");
                 scanf("%d",&pos);
-                DeleteAtPos(&first,pos);
+                DeleteAtPos(&first,&last,pos);
                 break;
                 
             case 7:
